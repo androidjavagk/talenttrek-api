@@ -49,8 +49,18 @@ app.use(express.json());
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+ let isConnected = false;
+ async function connectToDB(){
+  connectDatabase()
+ }
 // Connect to database
-connectDatabase();
+// connectDatabase();
+app.use((req, res, next)=>{
+  if (!isConnected){
+    connectToDB();
+  }
+  next();
+})
 
 // Error handling middleware for multer
 app.use((error, req, res, next) => {
@@ -116,8 +126,10 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(` TalentTrek API server running on port ${PORT}`);
-  console.log(` Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(` Health check: http://localhost:${PORT}/api/health`);
-});
+// app.listen(PORT, () => {
+//   console.log(` TalentTrek API server running on port ${PORT}`);
+//   console.log(` Environment: ${process.env.NODE_ENV || 'development'}`);
+//   console.log(` Health check: http://localhost:${PORT}/api/health`);
+// });
+
+module.exports = app;

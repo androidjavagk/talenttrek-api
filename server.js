@@ -38,10 +38,10 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
   console.log('✅ Created uploads directory');
 }
-
+// 'http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173'
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173'],
+  origin: ["*"],
   credentials: true
 }));
 app.use(express.json());
@@ -49,18 +49,8 @@ app.use(express.json());
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
- let isConnected = false;
- async function connectToDB(){
-  connectDatabase()
- }
 // Connect to database
-// connectDatabase();
-app.use((req, res, next)=>{
-  if (!isConnected){
-    connectToDB();
-  }
-  next();
-})
+connectDatabase();
 
 // Error handling middleware for multer
 app.use((error, req, res, next) => {
@@ -124,7 +114,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+// const PORT = process.env.PORT || 5000;
 
 // app.listen(PORT, () => {
 //   console.log(` TalentTrek API server running on port ${PORT}`);
